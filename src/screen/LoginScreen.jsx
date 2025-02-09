@@ -1,23 +1,89 @@
-import { Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { 
+  Image, 
+  ImageBackground, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  View, 
+  ActivityIndicator 
+} from 'react-native';
+import React, { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { API_BASE_URL } from '@env';
+import CustomAlert from './CustomAlert';
+import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const showAlert = (message) => {
+    setAlertVisible(false); // Close any existing alert
+    setTimeout(() => {
+      setAlertMessage(message);
+      setAlertVisible(true);
+    }, 100); // Small delay to prevent overlapping
+  };
+
   const handleRegister = () => {
     navigation.navigate("Signup");
-  }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      showAlert("Please enter email and password");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const requestData = { email, password };
+
+      const response = await axios.post(`${API_BASE_URL}/login`, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.data?.success) {
+        const { accessToken, refreshToken, user } = response.data.data;
+
+        // Ensure refreshToken exists before passing it
+        await login(accessToken, refreshToken || '', user);
+
+        showAlert("Login successful!");
+        setTimeout(() => {
+          navigation.navigate("Home");
+        }, 1000);
+      } else {
+        showAlert(response.data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login Error:", error.response?.data || error.message);
+      showAlert(error.response?.data?.message || "Login failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <CustomAlert visible={alertVisible} message={alertMessage} onClose={() => setAlertVisible(false)} />
       <View style={styles.topImageContainer}>
-        <Image
-          source={require("../assets/topVector.png")}
-          style={styles.topImage}
-        />
+        <Image source={require("../assets/topVector.png")} style={styles.topImage} />
       </View>
       <View style={styles.helloContainer}>
         <Text style={styles.helloText}>Hello</Text>
@@ -27,36 +93,53 @@ const LoginScreen = () => {
       </View>
       <View style={styles.inputContainer}>
         <FontAwesome name="user" size={24} color="#9A9A9A" style={styles.inputIcon} />
-        <TextInput style={styles.textInput} placeholder="Email" placeholderTextColor="#9A9A9A" />
+        <TextInput 
+          style={styles.textInput} 
+          placeholder="Email" 
+          placeholderTextColor="#9A9A9A"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
       </View>
       <View style={styles.inputContainer}>
         <Fontisto name="locked" size={24} color="#9A9A9A" style={styles.inputIcon} />
-        <TextInput style={styles.textInput} placeholder="Password" placeholderTextColor="#9A9A9A" secureTextEntry />
+        <TextInput 
+          style={styles.textInput} 
+          placeholder="Password" 
+          placeholderTextColor="#9A9A9A" 
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
       </View>
       <Text style={styles.forgotPasswordText}>Forgot Your Password?</Text>
-      <View style={styles.signInButtonContainer}>
+      <TouchableOpacity 
+        style={[styles.signInButtonContainer, loading && { opacity: 0.7 }]} 
+        onPress={handleLogin} 
+        disabled={loading}
+      >
         <Text style={styles.signIn}>Sign In</Text>
         <LinearGradient colors={['#F97794', '#623AA2']} style={styles.linearGradient}>
-          <AntDesign name="arrowright" size={24} color="#FFFFFF" />
+          {loading ? 
+          ( <ActivityIndicator size="small" color="#FFFFFF" />  ) : 
+          ( <AntDesign name="arrowright" size={24} color="#FFFFFF" /> )}
         </LinearGradient>
-      </View>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleRegister}>
         <Text style={styles.footerText}>
-          Don't have an account?{" "}
-          <Text style={{textDecorationLine: "underline"}}>Create</Text> 
+          Don't have an account? <Text style={{ textDecorationLine: "underline" }}>Create</Text> 
         </Text>
       </TouchableOpacity>      
       <View style={styles.leftVectorContainer}>
-        <ImageBackground
-          source={require("../assets/leftVector1.png")}
-          style={styles.leftVectorImage}
-        />        
+        <ImageBackground source={require("../assets/leftVector1.png")} style={styles.leftVectorImage}>
+        </ImageBackground>        
       </View>
     </View>
-  )
-}
-
-export default LoginScreen
+  );
+};
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -112,8 +195,7 @@ const styles = StyleSheet.create({
     marginTop: 120,
     justifyContent: "flex-end",
     width: "90%",
-
-    
+    alignItems: "center",
   },
   signIn: {
     color: "#262626",
@@ -144,4 +226,4 @@ const styles = StyleSheet.create({
     width: 200,
     height: 250,
   },
-})
+});
