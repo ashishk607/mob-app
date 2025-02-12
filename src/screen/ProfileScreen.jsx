@@ -12,8 +12,6 @@ import * as ImagePicker from "react-native-image-picker";
 
 const ProfileScreen = () => {
   const [profileImage, setProfileImage] = useState(null);
-
-  // Function to pick image from gallery
   const pickImage = async () => {
     ImagePicker.launchImageLibrary(
       {
@@ -34,7 +32,6 @@ const ProfileScreen = () => {
     );
   };
 
-  // Function to upload image to API
   const uploadImage = async (image) => {
     const formData = new FormData();
     formData.append("file", {
@@ -63,15 +60,6 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="bars" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.profileText}>Profile</Text>
-        <View style={{ width: 24 }} />
-      </View>
-
       {/* Profile Info */}
       <View style={styles.profileInfo}>
         <TouchableOpacity onPress={pickImage}>
