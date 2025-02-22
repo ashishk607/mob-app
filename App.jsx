@@ -24,6 +24,9 @@ import UpdatesScreen from './src/screen/UpdatesScreen';
 import StudyScreen from './src/screen/StudyScreen';
 import DocumentsScreen from './src/screen/DocumentsScreen';
 import SettingsScreen from './src/screen/SettingsScreen';
+import Document from './src/screen/Pages/DocumentDetails';
+import UpdatePage from './src/screen/Pages/Updatepage';
+import DocumentDetails from './src/screen/Pages/DocumentDetails';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -110,6 +113,19 @@ const MainStack = ({ toggleSidebar }) => (
         header: () => <Header toggleSidebar={toggleSidebar} />
       }}
     />
+    <Stack.Screen 
+      name="UpdatePage"  // Register UpdatePage here
+      component={UpdatePage}
+      options={{ title: 'Update Details' }}
+    />
+
+  <Stack.Screen 
+      name="DocumentDetails" 
+      component={DocumentDetails}
+      options={{ title: 'Update Details' }}
+    />
+    
+
   </Stack.Navigator>
 );
 
