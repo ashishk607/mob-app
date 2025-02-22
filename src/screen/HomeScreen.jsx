@@ -1,49 +1,48 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import icons
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const forms = [
-    { id: 1, title: 'Jati/Aay/ Niwas', icon: 'assignment' },
-    { id: 2, title: 'Admission Form', icon: 'assignment-ind' },
-    { id: 3, title: 'Exam Form', icon: 'assignment-turned-in' },
-    { id: 4, title: 'Degree Certificate', icon: 'school' },
-    { id: 5, title: 'Provisional or Migration', icon: 'swap-horiz' },
-    { id: 6, title: 'New Admission', icon: 'person-add' },
-    { id: 7, title: 'Govt. Exam Form', icon: 'description' },
-    { id: 8, title: 'Your All Documents', icon: 'folder' },
-    { id: 9, title: 'Find Your Lost Documents', icon: 'find-in-page' },
+    { id: 1, title: 'Jati/Aay/ Niwas', icon: 'assignment', screen: 'JatiAayNiwas' },
+    { id: 2, title: 'Admission Form', icon: 'assignment-ind', screen: 'AdmissionForm' },
+    { id: 3, title: 'Exam Form', icon: 'assignment-turned-in', screen: 'ExamForm' },
+    { id: 4, title: 'Degree Certificate', icon: 'school', screen: 'DegreeCertificate' },
+    { id: 5, title: 'Provisional or Migration', icon: 'swap-horiz', screen: 'ProvisionalMigration' },
+    { id: 6, title: 'New Admission', icon: 'person-add', screen: 'NewAdmission' },
+    { id: 7, title: 'Govt. Exam Form', icon: 'description', screen: 'GovtExamForm' },
+    { id: 8, title: 'Your All Documents', icon: 'folder', screen: 'AllDocuments' },
+    { id: 9, title: 'Find Your Lost Documents', icon: 'find-in-page', screen: 'LostDocuments' },
   ];
 
   const courses = [
-    { id: 1, title: 'B.A. Hons (Subjects)', icon: 'book' },
-    { id: 2, title: 'B.sc. Hons', icon: 'science' },
-    { id: 3, title: 'B.com', icon: 'business' },
-    { id: 4, title: 'BCA', icon: 'computer' },
-    { id: 5, title: 'BBA', icon: 'work' },
-    { id: 6, title: 'BBA', icon: 'work' },
+    { id: 1, title: 'B.A. Hons (Subjects)', icon: 'book', screen: 'BAHons' },
+    { id: 2, title: 'B.sc. Hons', icon: 'science', screen: 'BscHons' },
+    { id: 3, title: 'B.com', icon: 'business', screen: 'Bcom' },
+    { id: 4, title: 'BCA', icon: 'computer', screen: 'BCA' },
+    { id: 5, title: 'BBA', icon: 'work', screen: 'BBA' },
+    { id: 6, title: 'BBA', icon: 'work', screen: 'BBA' },
   ];
 
   return (
     <ScrollView style={styles.container}>
-      {/* Forms List */}
       <Text style={styles.sectionTitle}>Forms List</Text>
       <View style={styles.gridContainer}>
         {forms.map((form) => (
-          <View key={form.id} style={styles.card}>
+          <TouchableOpacity key={form.id} style={styles.card} onPress={() => navigation.navigate(form.screen)}>
             <Icon name={form.icon} size={30} color="#4CAF50" style={styles.icon} />
             <Text style={styles.cardText}>{form.title}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
-      {/* Courses List */}
+
       <Text style={styles.sectionTitle}>Courses List</Text>
       <View style={styles.gridContainer}>
         {courses.map((course) => (
-          <View key={course.id} style={styles.card}>
+          <TouchableOpacity key={course.id} style={styles.card} onPress={() => navigation.navigate(course.screen)}>
             <Icon name={course.icon} size={30} color="#FF5722" style={styles.icon} />
             <Text style={styles.cardText}>{course.title}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </ScrollView>
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   card: {
-    width: '32%', // Slightly less than half to fit two cards in a row with spacing
+    width: '32%',
     backgroundColor: '#fff',
     borderRadius: 10,
     marginBottom: 15,

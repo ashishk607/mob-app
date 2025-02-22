@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 
 const DocumentDetails = ({ title }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> 
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.details}>More details about {title}...</Text>
       {/* <Button title="Go Back" onPress={onBack} /> */}

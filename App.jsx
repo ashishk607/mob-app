@@ -1,17 +1,17 @@
-import React, { useState, useRef } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { 
-  ActivityIndicator, 
-  View, 
-  TouchableOpacity, 
+import React, {useState, useRef} from 'react';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {AuthProvider, useAuth} from './src/context/AuthContext';
+import {
+  ActivityIndicator,
+  View,
+  TouchableOpacity,
   Text,
   Modal,
   Animated,
   StyleSheet,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -27,13 +27,15 @@ import SettingsScreen from './src/screen/SettingsScreen';
 import Document from './src/screen/Pages/DocumentDetails';
 import UpdatePage from './src/screen/Pages/Updatepage';
 import DocumentDetails from './src/screen/Pages/DocumentDetails';
+import ExamForms from './src/screen/Pages/ExamForms';
+import ApplyForm from './src/screen/Pages/ApplyForm';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const AuthStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Signup" component={SignupScreen} />
   </Stack.Navigator>
@@ -42,9 +44,9 @@ const AuthStack = () => (
 const TabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
         headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({focused, color, size}) => {
           let iconName;
           switch (route.name) {
             case 'HomeTab':
@@ -67,26 +69,17 @@ const TabNavigator = () => {
         },
         tabBarActiveTintColor: '#FF7F50',
         tabBarInactiveTintColor: '#333',
-      })}
-    >
-      <Tab.Screen 
-        name="HomeTab" 
-        component={HomeScreen}
-        options={{ title: 'Home' }}
-      />
+      })}>
+      <Tab.Screen name="HomeTab" component={HomeScreen} options={{title: 'Home'}}/>
       <Tab.Screen name="Updates" component={UpdatesScreen} />
       <Tab.Screen name="Study" component={StudyScreen} />
       <Tab.Screen name="Documents" component={DocumentsScreen} />
-      <Tab.Screen 
-        name="ProfileTab" 
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
-      />
+      <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{title: 'Profile'}}/>
     </Tab.Navigator>
   );
 };
 
-const Header = ({ toggleSidebar }) => (
+const Header = ({toggleSidebar}) => (
   <View style={styles.header}>
     <TouchableOpacity onPress={toggleSidebar}>
       <Icon name="bars" size={24} color="#333" />
@@ -97,40 +90,45 @@ const Header = ({ toggleSidebar }) => (
   </View>
 );
 
-const MainStack = ({ toggleSidebar }) => (
+const MainStack = ({toggleSidebar}) => (
   <Stack.Navigator>
-    <Stack.Screen 
-      name="MainTabs" 
-      component={TabNavigator}
+    <Stack.Screen name="MainTabs" component={TabNavigator}
       options={{
-        header: () => <Header toggleSidebar={toggleSidebar} />
+        header: () => <Header toggleSidebar={toggleSidebar} />,
       }}
     />
-    <Stack.Screen 
-      name="Settings" 
-      component={SettingsScreen}
+    <Stack.Screen name="Settings" component={SettingsScreen}
       options={{
-        header: () => <Header toggleSidebar={toggleSidebar} />
+        header: () => <Header toggleSidebar={toggleSidebar} />,
       }}
     />
+    <Stack.Screen name="UpdatePage" component={UpdatePage} options={{title: 'Update Details'}}/>
+    <Stack.Screen name="DocumentDetails" component={DocumentDetails} options={{title: 'Update Details'}}/>
+    <Stack.Screen name="ExamForm" component={ExamForms} options={{title: 'Forms'}}/>
     <Stack.Screen 
-      name="UpdatePage"  // Register UpdatePage here
-      component={UpdatePage}
-      options={{ title: 'Update Details' }}
-    />
+  name="Form_Apply" 
+  component={ApplyForm} 
+  options={({ route }) => ({ title: route.params?.title || 'Forms' })} 
+/>
 
-  <Stack.Screen 
-      name="DocumentDetails" 
-      component={DocumentDetails}
-      options={{ title: 'Update Details' }}
-    />
-    
+   {/* later we can use */}
+    {/* <Stack.Screen name="DegreeCertificate" component={DegreeCertificate} options={{title: 'Degree Certificate'}}/>
+    <Stack.Screen name="ProvisionalMigration" component={ProvisionalMigration} options={{title: 'Provisional or Migration'}}/>
+    <Stack.Screen name="NewAdmission" component={NewAdmission} options={{title: 'New Admission'}}/>
+    <Stack.Screen name="GovtExamForm" component={GovtExamForm} options={{title: 'Govt. Exam Form'}}/>
+    <Stack.Screen name="AllDocuments" component={AllDocuments} options={{title: 'Your All Documents'}}/>
+    <Stack.Screen name="LostDocuments" component={LostDocuments} options={{title: 'Find Your Lost Documents'}}/>
+    <Stack.Screen name="BAHons" component={BAHons} options={{title: 'B.A. Hons (Subjects)'}}/>
+    <Stack.Screen name="BscHons" component={BscHons} options={{title: 'B.sc. Hons'}}/>
+    <Stack.Screen name="Bcom" component={Bcom} options={{title: 'B.com'}}/>
+    <Stack.Screen name="BCA" component={BCA} options={{title: 'BCA'}}/>
+    <Stack.Screen name="BBA" component={BBA} options={{title: 'BBA'}}/> */}
 
   </Stack.Navigator>
 );
 
 const AppNavigator = () => {
-  const { authState } = useAuth();
+  const {authState} = useAuth();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const sidebarOffset = useRef(new Animated.Value(-width * 0.75)).current;
   const navigation = useNavigation();
@@ -152,7 +150,7 @@ const AppNavigator = () => {
     }
   };
 
-  const handleNavigation = (screen) => {
+  const handleNavigation = screen => {
     toggleSidebar();
     if (screen === 'Logout') {
       // Handle logout logic here
@@ -178,26 +176,23 @@ const AppNavigator = () => {
             <TouchableOpacity
               style={styles.modalOverlay}
               activeOpacity={1}
-              onPress={toggleSidebar}
-            >
-              <Animated.View 
+              onPress={toggleSidebar}>
+              <Animated.View
                 style={[
-                  styles.sidebar, 
-                  { transform: [{ translateX: sidebarOffset }] }
-                ]}
-              >
+                  styles.sidebar,
+                  {transform: [{translateX: sidebarOffset}]},
+                ]}>
                 <View style={styles.sidebarContent}>
                   <Text style={styles.sidebarTitle}>Menu</Text>
                   {[
-                    { name: 'Profile', icon: 'user', screen: 'ProfileTab' },
-                    { name: 'Settings', icon: 'cog', screen: 'Settings' },
-                    { name: 'Logout', icon: 'sign-out', screen: 'Logout' },
+                    {name: 'Profile', icon: 'user', screen: 'ProfileTab'},
+                    {name: 'Settings', icon: 'cog', screen: 'Settings'},
+                    {name: 'Logout', icon: 'sign-out', screen: 'Logout'},
                   ].map((item, index) => (
                     <TouchableOpacity
                       key={index}
                       style={styles.sidebarItem}
-                      onPress={() => handleNavigation(item.screen)}
-                    >
+                      onPress={() => handleNavigation(item.screen)}>
                       <Icon name={item.icon} size={20} color="#333" />
                       <Text style={styles.sidebarText}>{item.name}</Text>
                     </TouchableOpacity>
@@ -232,7 +227,6 @@ const App = () => {
 
 export default App;
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -264,7 +258,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
+    shadowOffset: {width: 2, height: 0},
     shadowOpacity: 0.25,
     shadowRadius: 5,
     elevation: 5,
