@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -12,6 +12,7 @@ import {
   Animated,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -115,35 +116,31 @@ const MainStack = ({toggleSidebar}) => (
     <Stack.Screen name="Form_Apply" component={ApplyForm} options={({ route }) => ({ title: route.params?.title || 'Forms' })} />
     <Stack.Screen name="GovDocument" component={GovDocApplyUpdate} options={{title: 'Gov Document'}}/>
 
-   {/* later we can use */}
-    {/* <Stack.Screen name="DegreeCertificate" component={DegreeCertificate} options={{title: 'Degree Certificate'}}/>
-    <Stack.Screen name="ProvisionalMigration" component={ProvisionalMigration} options={{title: 'Provisional or Migration'}}/>
-    <Stack.Screen name="NewAdmission" component={NewAdmission} options={{title: 'New Admission'}}/>
-    <Stack.Screen name="GovtExamForm" component={GovtExamForm} options={{title: 'Govt. Exam Form'}}/>
-    <Stack.Screen name="AllDocuments" component={AllDocuments} options={{title: 'Your All Documents'}}/>
-    <Stack.Screen name="LostDocuments" component={LostDocuments} options={{title: 'Find Your Lost Documents'}}/>
-    <Stack.Screen name="BAHons" component={BAHons} options={{title: 'B.A. Hons (Subjects)'}}/>
-    <Stack.Screen name="BscHons" component={BscHons} options={{title: 'B.sc. Hons'}}/>
-    <Stack.Screen name="Bcom" component={Bcom} options={{title: 'B.com'}}/>
-    <Stack.Screen name="BCA" component={BCA} options={{title: 'BCA'}}/>
-    <Stack.Screen name="BBA" component={BBA} options={{title: 'BBA'}}/> */}
-
   </Stack.Navigator>
 );
 
 const AppNavigator = () => {
-  const {authState} = useAuth();
+  const {authState, logout} = useAuth();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const sidebarOffset = useRef(new Animated.Value(-width * 0.75)).current;
   const navigation = useNavigation();
 
+  const closeSidebar = (callback) => {
+    Animated.timing(sidebarOffset, {
+      toValue: -width * 0.75,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsSidebarVisible(false);
+      if (callback && typeof callback === 'function') {
+        callback();
+      }
+    });
+  };
+
   const toggleSidebar = () => {
     if (isSidebarVisible) {
-      Animated.timing(sidebarOffset, {
-        toValue: -width * 0.75,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => setIsSidebarVisible(false));
+      closeSidebar();
     } else {
       setIsSidebarVisible(true);
       Animated.timing(sidebarOffset, {
@@ -155,12 +152,40 @@ const AppNavigator = () => {
   };
 
   const handleNavigation = screen => {
-    toggleSidebar();
     if (screen === 'Logout') {
-      // Handle logout logic here
+      closeSidebar(() => confirmLogout());
       return;
     }
-    navigation.navigate(screen);
+    
+    closeSidebar(() => {
+      navigation.navigate(screen);
+    });
+  };
+  const confirmLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: handleLogout,
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+      console.error('Logout error:', error);
+    }
   };
 
   if (authState.isLoading) {
@@ -188,6 +213,17 @@ const AppNavigator = () => {
                 ]}>
                 <View style={styles.sidebarContent}>
                   <Text style={styles.sidebarTitle}>Menu</Text>
+                  {authState.userData && (
+                    <View style={styles.userInfo}>
+                      <Icon name="user-circle" size={50} color="#FF7F50" />
+                      <Text style={styles.userName}>
+                        {authState.userData.name || 'User'}
+                      </Text>
+                      <Text style={styles.userEmail}>
+                        {authState.userData.email || ''}
+                      </Text>
+                    </View>
+                  )}
                   {[
                     {name: 'Profile', icon: 'user', screen: 'ProfileTab'},
                     {name: 'Settings', icon: 'cog', screen: 'Settings'},
@@ -285,5 +321,22 @@ const styles = StyleSheet.create({
   sidebarText: {
     fontSize: 18,
     marginLeft: 10,
+  },
+  userInfo: {
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 5,
   },
 });
