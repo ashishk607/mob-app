@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import MyCarousel from './UI_Component/carousel';
+import MyCarousel from './UI_Component/carousel';
 
 
 const HomeScreen = ({navigation}) => {
@@ -69,7 +69,7 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* <MyCarousel /> */}
+      <MyCarousel />
 
       <Text style={styles.sectionTitle}>Forms List</Text>
       <View style={styles.gridContainer}>
