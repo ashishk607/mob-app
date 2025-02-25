@@ -29,6 +29,8 @@ import UpdatePage from './src/screen/Pages/Updatepage';
 import DocumentDetails from './src/screen/Pages/DocumentDetails';
 import ExamForms from './src/screen/Pages/ExamForms';
 import ApplyForm from './src/screen/Pages/ApplyForm';
+import Applications from './src/screen/Applications';
+import GovDocApplyUpdate from './src/screen/Pages/GovDocApplyUpdate';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -102,14 +104,16 @@ const MainStack = ({toggleSidebar}) => (
         header: () => <Header toggleSidebar={toggleSidebar} />,
       }}
     />
+
+    <Stack.Screen name="Applications" component={Applications}
+      options={{
+        header: () => <Header toggleSidebar={toggleSidebar} />,
+      }}/>
     <Stack.Screen name="UpdatePage" component={UpdatePage} options={{title: 'Update Details'}}/>
     <Stack.Screen name="DocumentDetails" component={DocumentDetails} options={{title: 'Update Details'}}/>
     <Stack.Screen name="ExamForm" component={ExamForms} options={{title: 'Forms'}}/>
-    <Stack.Screen 
-  name="Form_Apply" 
-  component={ApplyForm} 
-  options={({ route }) => ({ title: route.params?.title || 'Forms' })} 
-/>
+    <Stack.Screen name="Form_Apply" component={ApplyForm} options={({ route }) => ({ title: route.params?.title || 'Forms' })} />
+    <Stack.Screen name="GovDocument" component={GovDocApplyUpdate} options={{title: 'Gov Document'}}/>
 
    {/* later we can use */}
     {/* <Stack.Screen name="DegreeCertificate" component={DegreeCertificate} options={{title: 'Degree Certificate'}}/>
@@ -187,7 +191,9 @@ const AppNavigator = () => {
                   {[
                     {name: 'Profile', icon: 'user', screen: 'ProfileTab'},
                     {name: 'Settings', icon: 'cog', screen: 'Settings'},
+                    {name :'Applicatoins' ,icon :"folder", screen:'Applications'},
                     {name: 'Logout', icon: 'sign-out', screen: 'Logout'},
+
                   ].map((item, index) => (
                     <TouchableOpacity
                       key={index}

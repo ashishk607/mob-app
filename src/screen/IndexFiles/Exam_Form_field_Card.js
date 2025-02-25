@@ -95,16 +95,16 @@ const FormFields = {
   };
   
   const exams = [
-    { title: 'UP Police', description: 'UP police commission ..', expire: 'Expire on 15/4/25', fields: FormFields.Up_police },
-    { title: 'Delhi Police', description: 'Delhi police recruitment ..', expire: 'Expire on 20/5/25', fields: FormFields.Delhi_police },
-    { title: 'Mumbai Police', description: 'Mumbai police drive ..', expire: 'Expire on 30/6/25', fields: FormFields.Mumbai_police },
-    { title: 'Railway Exam', description: 'Indian railway job exam ..', expire: 'Expire on 25/7/25', fields: FormFields.Railway_Exam },
-    { title: 'SSC Exam', description: 'SSC combined graduate level ..', expire: 'Expire on 10/8/25', fields: FormFields.SSC_Exam },
-    { title: 'Bank PO', description: 'Bank probationary officer exam ..', expire: 'Expire on 5/9/25', fields: FormFields.Bank_PO },
-    { title: 'Forest Guard', description: 'Forest guard recruitment ..', expire: 'Expire on 18/10/25', fields: FormFields.Forest_Guard },
-    { title: 'Teacher Eligibility Test', description: 'State teacher eligibility test ..', expire: 'Expire on 2/11/25', fields: FormFields.Teacher_Eligibility_Test },
-    { title: 'Army Recruitment', description: 'Indian army recruitment rally ..', expire: 'Expire on 15/12/25', fields: FormFields.Army_Recruitment },
-    { title: 'Navy Exam', description: 'Indian navy entrance test ..', expire: 'Expire on 8/1/26', fields: FormFields.Navy_Exam },
+    { title: 'UP_Police',  description: 'UP police commission ..', expire: 'Expire on 15/4/25', fields: FormFields.Up_police },
+    { title: 'Delhi_Police', description: 'Delhi police recruitment ..', expire: 'Expire on 20/5/25', fields: FormFields.Delhi_police },
+    { title: 'Mumbai_Police', description: 'Mumbai police drive ..', expire: 'Expire on 30/6/25', fields: FormFields.Mumbai_police },
+    { title: 'Railway_Exam', description: 'Indian railway job exam ..', expire: 'Expire on 25/7/25', fields: FormFields.Railway_Exam },
+    { title: 'SSC_Exam', description: 'SSC combined graduate level ..', expire: 'Expire on 10/8/25', fields: FormFields.SSC_Exam },
+    { title: 'Bank_PO', description: 'Bank probationary officer exam ..', expire: 'Expire on 5/9/25', fields: FormFields.Bank_PO },
+    { title: 'Forest_Guard', description: 'Forest guard recruitment ..', expire: 'Expire on 18/10/25', fields: FormFields.Forest_Guard },
+    { title: 'Teacher_Eligibility Test', description: 'State teacher eligibility test ..', expire: 'Expire on 2/11/25', fields: FormFields.Teacher_Eligibility_Test },
+    { title: 'Army_Recruitment', description: 'Indian army recruitment rally ..', expire: 'Expire on 15/12/25', fields: FormFields.Army_Recruitment },
+    { title: 'Navy_Exam', description: 'Indian navy entrance test ..', expire: 'Expire on 8/1/26', fields: FormFields.Navy_Exam },
   ];
   
   export { FormFields, exams };

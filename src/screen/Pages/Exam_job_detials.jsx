@@ -3,18 +3,20 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Card } from 'react-native-elements';
 import { JobData } from '../IndexFiles/Jobsdetails';
 
-const JobDetailsLayout = ({ jobData = JobData }) => {
-  const {
-    title = 'N/A',
-    summary = 'No summary available.',
-    importantDates = [],
-    applicationFee = [],
-    ageLimit = {},
-    vacancies = [],
-    eligibility = [],
-    categoryWiseVacancies = [],
-    howToApply = [],
-  } = jobData ?? {};
+const JobDetailsLayout = ({ jobData = JobData, Exam_name }) => {
+    const {
+      title = 'N/A',
+      summary = 'No summary available.',
+      importantDates = [],
+      applicationFee = [],
+      ageLimit = {},
+      vacancies = [],
+      eligibility = [],
+      categoryWiseVacancies = [],
+      howToApply = [],
+    } = jobData?.[Exam_name] ?? {};
+    console.log(Exam_name)
+  
 
   const renderTable = (headers, rows) => (
     <View style={styles.table}>

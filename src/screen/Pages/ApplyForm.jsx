@@ -8,10 +8,12 @@ import {Text} from 'react-native-elements';
 const ApplyForm = () => {
   const route = useRoute();
   const {formfields} = route.params; // Extract formfields from route params
+console.log(route.params)
+const {title}=route.params 
 
   return (
     <ScrollView>
-      <JobDetailsLayout />
+      <JobDetailsLayout Exam_name={title} />
       <View style={styles.ApplyForm}>
         <Text style={styles.applyText}>To Apply</Text>
         <FormLayout fields={formfields} />
