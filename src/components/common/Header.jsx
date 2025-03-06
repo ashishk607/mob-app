@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { COLORS, SIZES, FONTS, SHADOWS } from '../../styles/theme';
+import { COLORS, SIZES, FONTS, SHADOWS } from '../../themes/theme';
 
 const Header = ({ title = 'My App', showMenu = true, showBack = false, rightComponent }) => {
   const navigation = useNavigation();

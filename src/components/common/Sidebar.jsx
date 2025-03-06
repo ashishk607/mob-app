@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { DrawerActions } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { COLORS, SIZES, FONTS } from '../../styles/theme';
+import { COLORS, SIZES, FONTS } from '../../themes/theme';
 import { API_BASE_URL } from '@env';
 
 const Sidebar = (props) => {

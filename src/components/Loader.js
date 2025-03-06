@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../styles/theme';
+import { COLORS, SIZES, FONTS } from '../themes/theme';
 
 const Loader = ({ 
   message = "Loading...", 
