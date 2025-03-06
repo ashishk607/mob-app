@@ -50,14 +50,14 @@ const LoginScreen = () => {
 
     try {
       const requestData = { email, password };
-
+      console.log(API_BASE_URL);
       const response = await axios.post(`${API_BASE_URL}/login`, requestData, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       });
-
+      console.log("response"+response);
       if (response.data?.success) {
         const { accessToken, refreshToken, user } = response.data.data;
 

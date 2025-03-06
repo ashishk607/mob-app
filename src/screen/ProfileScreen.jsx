@@ -1,131 +1,238 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   Image,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { API_BASE_URL } from '@env';
 import * as ImagePicker from 'react-native-image-picker';
-import ProgressBar from './UI_Component/pregressbar';
+import { useAuth } from '../context/AuthContext';
 
 const ProfileScreen = () => {
-  const [progress, setProgress] = useState(0);
+  const { authState, logout } = useAuth();
+  const { token } = authState;
+
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     name: '',
-    email: 'example@email.com',
+    email: '',
     number: '',
-    age: '',
-    state: '',
-    college: '',
-    address: '',
-    occupation: '',
-    bio: '',
   });
 
-  const handleChange = (key, value) => {
-    try {
-      setForm(prev => ({ ...prev, [key]: value }));
-    } catch (error) {
-      console.error('Error updating form field:', error);
-    }
-  };
-
-  const countFilledFields = () => {
-    try {
-      return Object.values(form).filter(value => value.trim() !== '').length;
-    } catch (error) {
-      console.error('Error counting filled fields:', error);
-      return 0;
-    }
-  };
-
   useEffect(() => {
-    try {
-      setProgress(countFilledFields());
-    } catch (error) {
-      console.error('Error setting progress on load:', error);
+    if (!token) {
+      Alert.alert('Session Expired', 'Please login again.', [{ text: 'OK', onPress: logout }]);
+      return;
     }
-  }, []);
-
-  const handleSave = () => {
-    setLoading(true);
+    console.log(token);
+    fetchUserDetails();
+  }, [token]);
+  const fetchUserDetails = async () => {
+    setRefreshing(true);
     try {
-      setTimeout(() => {
-        setLoading(false);
-        setProgress(countFilledFields());
-        // Alert.alert('Profile Saved', `Your profile details have been saved successfully! Filled fields: ${countFilledFields()}/9`);
-      }, 1000);
-    } catch (error) {
-      console.error('Error handling save:', error);
+      const response = await fetch(`${API_BASE_URL}/current-user`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (response.status === 401 || response.status === 403) {
+        Alert.alert('Session Expired', 'Your session has expired. Please log in again.');
+        logoutUser();
+        return;
+      }
+  
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const textResponse = await response.text();
+        console.log('Unexpected Response:', textResponse);
+        throw new Error('Invalid response format. Expected JSON.');
+      }
+  
+      const responseData = await response.json();
+      console.log('User Details:', responseData);
+  
+      if (response.ok && responseData.success) {
+        const { fullName, email, mobileNo, avatar } = responseData.data;
+        setForm({ name: fullName || '', email: email || '', number: mobileNo || '' });
+        setProfileImage(avatar ? { uri: avatar } : null);
+      } else {
+        Alert.alert('Error', responseData.message || 'Failed to fetch user details.');
+      }
+    } 
+    catch (error) {
+      console.log('Error fetching user details:', error);
+      Alert.alert('Something went wrong while fetching user data.');
+    } finally {
+      setRefreshing(false);
       setLoading(false);
+    }
+  };
+  
+  
+  // const fetchUserDetails = async () => {
+  //   setRefreshing(true);
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/current-user`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+
+  //     const responseData = await response.json();
+  //     console.log('User Details:', responseData);
+  //     if (response.ok && responseData.success) {
+  //       const { fullName, email, mobileNo, avatar } = responseData.data;
+  //       setForm({ name: fullName || '', email: email || '', number: mobileNo || '' });
+  //       setProfileImage(avatar ? { uri: avatar } : null);
+  //     } else {
+  //       Alert.alert('Error', responseData.message || 'Failed to fetch user details.');
+  //     }
+  //   } 
+  //   catch (error) {
+  //     console.log('Error fetching user details:', error);
+  //     Alert.alert('Error', 'Something went wrong while fetching user data.');
+  //   } finally {
+  //     setRefreshing(false);
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/update-account`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert('Success', 'Profile updated successfully');
+        fetchUserDetails();
+        setIsEditing(false);
+      } else {
+        Alert.alert('Error', data.message || 'Failed to update profile');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong while updating profile');
     }
   };
 
   const pickImage = async () => {
-    try {
-      ImagePicker.launchImageLibrary({ mediaType: 'photo', quality: 1 }, response => {
-        if (response.didCancel) return;
-        if (response.errorMessage) {
-          console.error('ImagePicker Error: ', response.errorMessage);
-        } else if (response.assets && response.assets.length > 0) {
-          let source = { uri: response.assets[0].uri };
-          setProfileImage(source);
-        }
-      });
-    } catch (error) {
-      console.error('Error picking image:', error);
-    }
+    ImagePicker.launchImageLibrary({ mediaType: 'photo', quality: 1 }, async (response) => {
+      if (response.didCancel) return;
+      if (response.errorMessage) {
+        Alert.alert('Error', response.errorMessage);
+      } else if (response.assets?.length) {
+        setProfileImage({ uri: response.assets[0].uri });
+        await uploadProfileImage(response.assets[0]);
+      }
+    });
   };
 
+  const uploadProfileImage = async (image) => {
+    if (!image || !image.uri) {
+      Alert.alert('Error', 'Invalid image selected.');
+      return;
+    }
+  
+    setUploading(true);
+    try {
+      console.log('Uploading image:', image);
+      
+      const formData = new FormData();
+      formData.append('avatar', {
+        uri: image.uri,
+        type: image.type || 'image/jpeg', // Ensure a valid MIME type
+        name: image.fileName || `avatar_${Date.now()}.jpg`,
+      });
+  
+      const response = await fetch(`${API_BASE_URL}/avatar`, {
+        method: 'PATCH',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data', // Ensure correct content type
+        },
+      });
+  
+      const data = await response.json();
+      console.log('Upload Response:', data);
+  
+      if (response.ok) {
+        Alert.alert('Success', 'Profile image updated successfully');
+        fetchUserDetails();
+      } else {
+        Alert.alert('Error', data.message || 'Failed to update profile image');
+      }
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      Alert.alert('Error', 'Something went wrong while updating the profile image');
+    } finally {
+      setUploading(false);
+    }
+  };
+  
+
+  const onRefresh = useCallback(() => fetchUserDetails(), []);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#3498db" />
+        <Text style={styles.loaderText}>Loading profile...</Text>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 20 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <View style={styles.profileInfo}>
         <TouchableOpacity onPress={pickImage}>
           <Image
-            source={profileImage ? profileImage : require('../assets/default-avatar.png')}
+            source={profileImage || require('../assets/default-avatar.png')}
             style={styles.profileImage}
           />
           <View style={styles.editIcon}>
             <Icon name="camera" size={20} color="#FFF" />
           </View>
         </TouchableOpacity>
-        <Text style={styles.name}>Ashish Maurya</Text>
-        <Text style={styles.username}>ashish.culture6@gmail.com</Text>
+        <View style={{ marginTop: 20 }}>
+          <Text style={styles.name}>{form.name}</Text>
+          <Text style={styles.username}>{form.email}</Text>
+        </View>
       </View>
 
-      <ProgressBar totalItems={9} progress={progress} />
-
       <View style={styles.formContainer}>
-        {Object.keys(form).map(key => (
+        {['name', 'number'].map((key) => (
           <View key={key} style={styles.fieldInput}>
-            <Text style={styles.label}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
             <TextInput
-              style={[styles.input, key === 'email' && styles.disabledInput]}
-              placeholder={`Enter your ${key}`}
+              style={[styles.input, !isEditing && styles.disabledInput]}
               value={form[key]}
-              onChangeText={text => handleChange(key, text)}
-              keyboardType={key === 'number' || key === 'age' ? 'numeric' : 'default'}
-              editable={key !== 'email'}
-              multiline={key === 'bio'}
-              numberOfLines={key === 'bio' ? 3 : 1}
+              onChangeText={(text) => setForm({ ...form, [key]: text })}
+              editable={isEditing}
+              placeholder={key === 'name' ? 'Full Name' : 'Mobile Number'}
             />
           </View>
         ))}
       </View>
 
-      {loading ? <ActivityIndicator size="large" color="#0000ff" /> : 
-        <TouchableOpacity style={styles.save} onPress={handleSave}>
-  <Text style={styles.saveText}>Save</Text>
-</TouchableOpacity>      }
+      <TouchableOpacity style={styles.editButton} onPress={() => (isEditing ? handleSave() : setIsEditing(true))}>
+        {uploading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>{isEditing ? 'Save' : 'Edit'}</Text>}
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -137,6 +244,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF',
     paddingHorizontal: 20,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loaderText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
   },
   profileInfo: {
     alignItems: 'center',
@@ -164,54 +281,27 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   fieldInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  label: {
-    
-    width: 110,
-    fontSize: 16,
-    height: 40,
-    borderColor: '#f0f0f0',
-    borderWidth: 1,
-    borderRadius: 25,
-    paddingTop: 8,
-    paddingLeft:12,
-    paddingRight:12,
-    borderRightWidth:0,
-    // borderBottomLeftRadius:25,
-    // borderTopLeftRadius:25,
-    backgroundColor:'#f0f0f0'
-    
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   input: {
-    flex: 1,
     height: 40,
-    borderColor: '#f0f0f0',
-    borderWidth: 1,
-    // borderRadius: 25,
-    paddingHorizontal: 10,
-    borderLeftWidth:0,
-    borderBottomRightRadius:25,
-    borderTopRightRadius:25,
-
+    fontSize: 16,
   },
   disabledInput: {
-    // backgroundColor: '#f0f0f0',
-    color:'lightgrey'
+    backgroundColor: '#f0f0f0',
+    color: 'grey',
   },
-
-  save: {
-    backgroundColor: '#76c7c0',
+  editButton: {
+    backgroundColor: '#3498db',
     borderRadius: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
     alignItems: 'center',
+    marginTop: 20,
   },
-  
-  saveText: {
+  buttonText: {
     color: 'white',
     fontSize: 16,
   },
-  
 });
