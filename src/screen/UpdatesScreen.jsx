@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import UpdateScreen_FORUSER from './UpdateScreen_FORUSER';
-import UpdateScreen_FORALL from './UpdateScreen_FORALL';
+import UpdateScreen_FORUSER from '../screens/Updates/UpdateScreen_FORUSER';
+import UpdateScreen_FORALL from '../screens/Updates/UpdateScreen_FORALL';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 

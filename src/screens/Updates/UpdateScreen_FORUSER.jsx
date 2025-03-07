@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import images from '../assets/images';
+import images from '../../assets/images';
 
 const updates = [
-  { title: 'College Fest', time: 'Today · 38 mins ago', image: images.College_fest, desc: 'A vibrant event with music, dance, and fun...' },
-  { title: 'Music Event', time: 'Yesterday · 4 PM', image: images.Music_event, desc: 'Live performances from top artists and bands...' },
-  { title: 'Sports Tournament', time: 'Last Week · 10 AM', image: images.Spots, desc: 'Exciting matches between top teams, thrilling finals...' },
-  { title: 'Art Exhibition', time: 'Last Sunday · 2 PM', image: images.College_fest, desc: 'A showcase of creative paintings, sculptures, and more...' }, // Repeated
-  { title: 'Tech Conference', time: 'Monday · 10 AM', image: images.Music_event, desc: 'Latest innovations in AI, blockchain, and technology...' } // Repeated
+  { title: 'Admit card ', time: 'Today · 38 mins ago', image: images.Notice, desc: 'A vibrant event with music, dance, and fun...' },
+  { title: 'NSS Registration', time: 'Yesterday · 4 PM', image: images.NoticeA, desc: 'Live performances from top artists and bands...' },
+  { title: 'Fee Due', time: 'Last Week · 10 AM', image: images.NoticeB, desc: 'Exciting matches between top teams, thrilling finals...' },
+  { title: 'University Holiday', time: 'Last Sunday · 2 PM', image: images.NoticeC, desc: 'A showcase of creative paintings, sculptures, and more...' }, // Repeated
+  // { title: 'Tech Conference', time: 'Monday · 10 AM', image: images.Music_event, desc: 'Latest innovations in AI, blockchain, and technology...' } // Repeated
 ];
 
 const UpdateScreen_FORUSER = ({ navigation }) => (
