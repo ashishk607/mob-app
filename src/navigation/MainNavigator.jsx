@@ -26,7 +26,7 @@ const MainNavigator = () => {
     // setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/current-user`, {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: {Authorization: `Bearer ${token}`}, 
       });
 
       if (response.status === 401 || response.status === 403) {
