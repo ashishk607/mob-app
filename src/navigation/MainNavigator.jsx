@@ -9,6 +9,7 @@ import UpdatesScreen from '../screens/Updates/UpdatesScreen';
 import UniversityAdminNavigation from './UniversityAdminNavigation';
 import {API_BASE_URL} from '@env';
 import {useAuth} from '../context/AuthContext'; // Assuming you have auth context
+import NoticePage from '../screens/Notice/NoticePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +27,7 @@ const MainNavigator = () => {
     // setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/current-user`, {
-        headers: {Authorization: `Bearer ${token}`}, 
+        headers: {Authorization: `Bearer ${token}`},
       });
 
       if (response.status === 401 || response.status === 403) {
@@ -94,6 +95,7 @@ const MainNavigator = () => {
             component={UpdatesScreen}
             options={{title: 'Update Details'}}
           />
+          <Stack.Screen name="UpdatesPage" component={NoticePage} />
         </>
       )}
     </Stack.Navigator>

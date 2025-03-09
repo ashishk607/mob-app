@@ -36,6 +36,10 @@ const UniversityHomeScreen = () => {
 
   return (
     <>
+
+    <View style={styles.Headingcontainer}>
+      <Text style={styles.HeadingText}>University -- Name</Text>
+    </View>
       <ScrollView>
         <View style={styles.container}>
           {updates.map((update, index) => (
@@ -70,6 +74,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
   },
+  Headingcontainer: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 25,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+  
+    // Border styles
+    borderLeftWidth: 1,
+    borderLeftColor: '#6200ea',
+    borderRightWidth: 1,
+    borderRightColor: '#6200ea',
+    borderBottomWidth: 6,
+    borderBottomColor: '#6200ea',
+  
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  
+    // Shadow for Android
+    elevation: 8,
+  
+    // Layout
+    margin: 2,
+    position: 'relative',
+  },
+  
+  
+  HeadingText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    marginVertical: 10,
+    textAlign: 'center',
+    // backgroundColor:'#6200ee',
+    color:'black',
+  },
   updateCard: {
     width: 380,
     height: 250,
@@ -97,7 +139,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10,
     right: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor:'#6200ee',
     padding: 8,
     borderRadius: 5,
   },

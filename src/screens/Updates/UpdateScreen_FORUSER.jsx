@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import images from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
 
 const updates = [
   { title: 'Admit card ', time: 'Today · 38 mins ago', image: images.Notice, desc: 'A vibrant event with music, dance, and fun...' },
@@ -10,24 +11,39 @@ const updates = [
   // { title: 'Tech Conference', time: 'Monday · 10 AM', image: images.Music_event, desc: 'Latest innovations in AI, blockchain, and technology...' } // Repeated
 ];
 
-const UpdateScreen_FORUSER = ({ navigation }) => (
-  <View style={styles.container}>
-    {updates.map((update, index) => (
-      <TouchableOpacity 
-        key={index} 
-        style={styles.updateCard} 
-        onPress={() => navigation.navigate('UpdatePage', { update })} // Navigate with update data
-      >
-        <Image source={update.image} style={styles.image} />
-        <View style={styles.overlayTextContainer}>
-          <Text style={styles.overlayText}>{update.title}</Text>
-          <Text style={styles.desc}>{update.desc}</Text>
-          <Text style={styles.overlayDateTime}>{update.time}</Text>
+const UpdateScreen_FORUSER = () => {
+  const navigation = useNavigation();
+
+  return (
+    <>
+      <ScrollView>
+        <View style={styles.container}>
+          {updates.map((update, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.updateCard}
+              onPress={() =>
+                navigation.navigate('UpdatesPage', {
+                  title: update.title,
+                  postTime: update.time,
+                  viewCount: '78',
+                  image: update.image,
+                })
+              } // Navigate with update data
+            >
+              <Image source={update.image} style={styles.image} />
+              <View style={styles.overlayTextContainer}>
+                <Text style={styles.overlayText}>{update.title}</Text>
+                <Text style={styles.desc}>{update.desc}</Text>
+                <Text style={styles.overlayDateTime}>{update.time}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
-      </TouchableOpacity>
-    ))}
-  </View>
-);
+      </ScrollView>
+    </>
+  );
+};
 
 export default UpdateScreen_FORUSER;
 
