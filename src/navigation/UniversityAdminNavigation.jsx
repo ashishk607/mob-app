@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import {useFocusEffect} from '@react-navigation/native';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ProfileScreen from '../screens/Profile/ProfileScreen';
@@ -12,14 +12,25 @@ import NoticePage from '../screens/Notice/NoticePage';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const NoticeStack = () => {
+const getTabBarVisibility = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Notice';
+  return routeName === 'NoticePage' || routeName === 'NoticePageFromHome' ? 'none' : 'flex';
+};
+
+const NoticeStack = ({route}) => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Notice" component={Notice} />
-      <Stack.Screen name="NoticePage" component={NoticePage}   />
+      <Stack.Screen name="NoticePage" component={NoticePage} />
+    </Stack.Navigator>
+  );
+};
+
+const HomeStack = ({route}) => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Home" component={UniversityHomeScreen} />
+      <Stack.Screen name="NoticePageFromHome" component={NoticePage} />
     </Stack.Navigator>
   );
 };
@@ -29,6 +40,7 @@ const UniversityAdminNavigation = () => {
     <Tab.Navigator
       screenOptions={({route}) => ({
         headerShown: false,
+        tabBarStyle: { display: getTabBarVisibility(route) },
         tabBarIcon: ({color, size}) => {
           const icons = {
             HomeTab: 'home',
@@ -39,25 +51,18 @@ const UniversityAdminNavigation = () => {
         },
         tabBarActiveTintColor: '#FF4500',
         tabBarInactiveTintColor: '#555',
-      })}>
-      <Tab.Screen
-        name="HomeTab"
-        component={UniversityHomeScreen}
-        options={{title: 'Home'}}
-      />
-      <Tab.Screen
-        name="Notice"
-        component={NoticeStack}
-        options={{
+      })}
+    >
+      <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: 'Home' }} />
+      <Tab.Screen 
+        name="Notice" 
+        component={NoticeStack} 
+        options={{ 
           title: 'Notice',
-          unmountOnBlur: true, // Resets NoticeStack when tab loses focus
-        }}
+          unmountOnBlur: true,
+        }} 
       />
-      <Tab.Screen
-        name="ProfileTab"
-        component={ProfileScreen}
-        options={{title: 'Profile'}}
-      />
+      <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   );
 };

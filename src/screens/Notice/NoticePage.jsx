@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions, TextInput } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions, TextInput, Alert, InteractionManager } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PinchGestureHandler, State } from 'react-native-gesture-handler';
 import { launchImageLibrary } from 'react-native-image-picker';
+import Toast from 'react-native-simple-toast';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -47,6 +48,28 @@ const NoticePage = ({ route, navigation }) => {
     });
   };
 
+  const handleDelete = () => {
+    console.log('Delete button pressed');
+    
+    InteractionManager.runAfterInteractions(() => {
+      Alert.alert(
+        'Delete Notice',
+        `Are you sure you want to delete "${title}"?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Yes, Delete',
+            onPress: () => {
+              Toast.show(`Notice "${title}" has been deleted`, Toast.LONG);
+              navigation.goBack();
+            },
+            style: 'destructive'
+          }
+        ]
+      );
+    });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.card}>
@@ -76,7 +99,7 @@ const NoticePage = ({ route, navigation }) => {
                 <TouchableOpacity style={styles.iconButton} onPress={handleEdit}>
                   <Icon name="pencil" size={24} color="#4CAF50" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={handleDelete}>
                   <Icon name="trash" size={24} color="#F44336" />
                 </TouchableOpacity>
               </>
@@ -112,7 +135,7 @@ const styles = StyleSheet.create({
   iconContainer: { flexDirection: 'row' },
   iconButton: { marginLeft: 10, padding: 8, backgroundColor: '#F5F5F5', borderRadius: 50 },
   postTime: { fontSize: 14, fontStyle: 'italic', color: '#616161', marginVertical: 10 },
-  image: { width: '100%', height: '80%', borderRadius: 10,  },
+  image: { width: '100%', height: '80%', borderRadius: 10 },
   editableImage: { borderColor: '#FF9800', borderWidth: 3 },
   viewCount: { fontSize: 18, color: '#424242', marginTop: 12, fontWeight: '500' },
 });

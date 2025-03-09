@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import images from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const updates = [
   {
@@ -32,37 +32,34 @@ const updates = [
   // { title: 'Tech Conference', time: 'Monday · 10 AM', image: images.Music_event, desc: 'Latest innovations in AI, blockchain, and technology...' } // Repeated
 ];
 const UniversityHomeScreen = () => {
-    const navigation = useNavigation();
-  
+  const navigation = useNavigation();
+
   return (
     <>
-    <ScrollView>
-      <View style={styles.container}>
-        {updates.map((update, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.updateCard}
-            onPress={() =>
-              navigation.navigate('Notice', {
-                screen: 'NoticePage',
-                params: {
+      <ScrollView>
+        <View style={styles.container}>
+          {updates.map((update, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.updateCard}
+              onPress={() =>
+                navigation.navigate('NoticePageFromHome', {
                   title: update.title,
                   postTime: update.time,
                   viewCount: '78',
                   image: update.image,
-                },
-              })
-            } // Navigate with update data
-          >
-            <Image source={update.image} style={styles.image} />
-            <View style={styles.overlayTextContainer}>
-              <Text style={styles.overlayText}>{update.title}</Text>
-              <Text style={styles.desc}>{update.desc}</Text>
-              <Text style={styles.overlayDateTime}>{update.time}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+                })
+              } // Navigate with update data
+            >
+              <Image source={update.image} style={styles.image} />
+              <View style={styles.overlayTextContainer}>
+                <Text style={styles.overlayText}>{update.title}</Text>
+                <Text style={styles.desc}>{update.desc}</Text>
+                <Text style={styles.overlayDateTime}>{update.time}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
     </>
   );
