@@ -10,6 +10,8 @@ import UniversityAdminNavigation from './UniversityAdminNavigation';
 import {API_BASE_URL} from '@env';
 import {useAuth} from '../context/AuthContext'; // Assuming you have auth context
 import NoticePage from '../screens/Notice/NoticePage';
+import PurchasedDocumentsScreen from '../screens/Documents/PurchasedDocumentsScreen';
+import DocumentOverview from '../screens/Documents/DocumentOverview';
 
 const Stack = createNativeStackNavigator();
 
@@ -98,6 +100,17 @@ const MainNavigator = () => {
           <Stack.Screen name="UpdatesPage" component={NoticePage} />
         </>
       )}
+      <Stack.Screen
+            name="PurchasedDocuments"
+            component={PurchasedDocumentsScreen} // Your Purchased Documents screen
+            options={{ title: 'Purchased Documents' }}
+          />
+
+<Stack.Screen
+            name="DocumentOverview"
+            component={DocumentOverview} // Your Purchased Documents screen
+            options={{ title: 'Purchased Documents' }}
+          />
     </Stack.Navigator>
   );
 };

@@ -46,7 +46,7 @@ const UniversityHomeScreen = () => {
   return (
     <>
       <View style={styles.headingContainer}>
-        <Text style={styles.headingText}>University -- Name</Text>
+        <Text style={styles.headingText}>Amity University</Text>
       </View>
       <ScrollView>
         <View style={styles.buttonContainer}>
